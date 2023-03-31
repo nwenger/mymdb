@@ -19,7 +19,7 @@ ul {
 
 ul li {
     cursor: pointer;
-    position: relative;
+    /*position: relative;*/
     padding: 12px 8px 12px 40px;
     list-style-type: none;
     background: #eee;
@@ -36,6 +36,10 @@ ul li:nth-child(odd) {
     background: #f9f9f9;
 }
 
+ul li:hover {
+    background: #ddd;
+}
+
 ul li.checked {
     background: #888;
     color: #fff;
@@ -44,7 +48,7 @@ ul li.checked {
 
 ul li.checked::before {
     content: '';
-    position: absolute;
+    /*position: absolute;*/
     border-color: #fff;
     border-style: solid;
     border-width: 0 2px 2px 0;
@@ -54,19 +58,105 @@ ul li.checked::before {
     height: 15px;
     width: 7px;
 }
+
+ul li.newcheck {
+    background: #f44336;
+    color: white;
+    text-decoration: line-through;
+}
+
+ul li.newcheck::before {
+    content: '';
+    /*position: absolute; */
+    border-color: #fff;
+    border-style: solid;
+    border-width: 0 2px 2px 0;
+    top: 10px;
+    left: 16px;
+    transform: rotate(45deg);
+    height: 15px;
+    width: 7px;
+}
+
+ul li.newdel {
+    background: #f44336;
+    color: white;
+}
+
+.header {
+    padding: 10px 16px;
+    background: #555;
+    color: #f1f1f1;
+}
+
+.content {
+    padding: 16px;
+}
+
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.stick + .content {
+    padding-top: 102px;
+}
+
+
+
+
 </style>
 <body>
-    <ul>
-        {{range .}}
-	    {{if .Watched}}
-	    <li class=checked>
-        {{else}}
-        <li>
-        {{end}}
-	    {{.Rank}}   {{.Title}}
-	    </li>
-	    {{end}}
-	</ul>
+    <div class="header" id="buttonheader" style="display: inline;">
+        <form action="/save/" method="POST">
+            <input type="submit" value="Save"></input>
+        </form>
+        <form action="/reset/" method="POST">
+            <input type="submit" value="Reset"></input>
+        </form>
+    </div>
+    <div class="content">
+       <ul>
+           {{range .}}
+	        {{if .Watched}}
+	        <li class=checked>
+           {{else}}
+           <li>
+           {{end}}
+	        {{.Rank}}   {{.Title}}
+	        </li>
+	        {{end}}
+	    </ul>
+    </div>
+
+<script>
+window.onscroll = function() {stickHeader()};
+
+var header = document.getElementById('buttonheader');
+var sticky = header.offsetTop;
+
+function stickHeader() {
+    if (window.pageYOffset > sticky) {
+        header.classList.add("sticky");
+    } else {
+        header.classList.remove("sticky");
+  }
+}
+
+var list = document.querySelector('ul');
+list.addEventListener('click', function(ev) {
+    if (ev.target.tagName === 'LI') {
+        if (ev.target.classList.contains('checked') || ev.target.classList.contains('newdel')) {
+            ev.target.classList.toggle('checked');
+            ev.target.classList.toggle('newdel');
+        } else {
+            ev.target.classList.toggle('newcheck');
+        }
+    }
+}, false);
+</script>
+
 </body>
 </html>
 
